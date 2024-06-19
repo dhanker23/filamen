@@ -12,8 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class LokasiResource extends Resource
+class LokasiResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Lokasi::class;
 
@@ -76,6 +77,18 @@ class LokasiResource extends Resource
             'create' => Pages\CreateLokasi::route('/create'),
             'view' => Pages\ViewLokasi::route('/{record}'),
             'edit' => Pages\EditLokasi::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
         ];
     }
 }

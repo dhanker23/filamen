@@ -13,8 +13,9 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\StokOutResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\StokOutResource\RelationManagers;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class StokOutResource extends Resource
+class StokOutResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = StokOut::class;
 
@@ -36,9 +37,9 @@ class StokOutResource extends Resource
                     // ->relationship('product', 'name')
                     ->options(Product::query()->pluck('name', 'id'))
                     ->reactive()
-                    ->afterStateUpdated(fn ($state,Forms\Set $set) => 
+                    ->afterStateUpdated(fn ($state,Forms\Set $set) =>
                         $set('satuans_id', Product::find($state)->satuan->name)),
-                
+
                 Forms\Components\TextInput::make('qty')
                     ->Label('Jumlah Keluar')
                     ->required()
@@ -58,7 +59,7 @@ class StokOutResource extends Resource
                 Tables\Columns\TextColumn::make('product.name')
                     ->numeric()
                     ->sortable(),
-                
+
                 Tables\Columns\TextColumn::make('qty')
                     ->Label('Jumlah Keluar')
                     ->numeric()
@@ -102,6 +103,18 @@ class StokOutResource extends Resource
             'create' => Pages\CreateStokOut::route('/create'),
             // 'view' => Pages\ViewStokOut::route('/{record}'),
             // 'edit' => Pages\EditStokOut::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
         ];
     }
 }

@@ -13,8 +13,9 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\StokInResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\StokInResource\RelationManagers;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class StokInResource extends Resource
+class StokInResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = StokIn::class;
 
@@ -33,10 +34,10 @@ class StokInResource extends Resource
                     ->required()
                     ->options(Product::query()->pluck('name', 'id'))
                     ->reactive()
-                    ->afterStateUpdated(fn ($state,Forms\Set $set) => 
+                    ->afterStateUpdated(fn ($state,Forms\Set $set) =>
                         $set('satuans_id', Product::find($state)->satuan->name)),
-                    
-                    
+
+
                 Forms\Components\DatePicker::make('date')
                     ->required(),
                 Forms\Components\TextInput::make('qty')
@@ -59,9 +60,9 @@ class StokInResource extends Resource
                     ->numeric()
                     ->sortable()
                     ->searchable(),
-                    
+
                 Tables\Columns\TextColumn::make('qty')
-                    ->Label('Jumlah Masuk') 
+                    ->Label('Jumlah Masuk')
                     ->numeric(),
                 Tables\Columns\TextColumn::make('product.satuan.name'),
                 Tables\Columns\TextColumn::make('description')
@@ -112,6 +113,18 @@ class StokInResource extends Resource
             'create' => Pages\CreateStokIn::route('/create'),
             // 'view' => Pages\ViewStokIn::route('/{record}'),
             'edit' => Pages\EditStokIn::route('/{record}/edit'),
+        ];
+    }
+
+     public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
         ];
     }
 }

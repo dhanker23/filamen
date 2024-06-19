@@ -12,8 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class SatuanResource extends Resource
+class SatuanResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Satuan::class;
 
@@ -76,6 +77,18 @@ class SatuanResource extends Resource
             'create' => Pages\CreateSatuan::route('/create'),
             'view' => Pages\ViewSatuan::route('/{record}'),
             'edit' => Pages\EditSatuan::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
         ];
     }
 }

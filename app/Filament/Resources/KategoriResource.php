@@ -12,8 +12,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class KategoriResource extends Resource
+class KategoriResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Kategori::class;
 
@@ -76,6 +77,18 @@ class KategoriResource extends Resource
             'create' => Pages\CreateKategori::route('/create'),
             'view' => Pages\ViewKategori::route('/{record}'),
             'edit' => Pages\EditKategori::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
         ];
     }
 }

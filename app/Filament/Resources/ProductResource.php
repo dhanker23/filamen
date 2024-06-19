@@ -15,8 +15,9 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\ProductResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ProductResource\RelationManagers;
+use BezhanSalleh\FilamentShield\Contracts\HasShieldPermissions;
 
-class ProductResource extends Resource
+class ProductResource extends Resource implements HasShieldPermissions
 {
     protected static ?string $model = Product::class;
 
@@ -36,34 +37,34 @@ class ProductResource extends Resource
                     ->unique('products', 'name', ignoreRecord: true)
                     ->required()
                     ->maxLength(255),
-                    
+
                 TextInput::make('qty')
                     ->required()
                     ->numeric()
                     ->default(0),
-                    
+
                 Select::make('satuan_id')
                     ->label('Satuan')
-                    ->relationship('satuan', 'name') 
+                    ->relationship('satuan', 'name')
                     ->required(),
-                                    
+
                 Select::make('lokasi_id')
                     ->label('Lokasi')
                     ->searchable()
                     ->preload()
                     ->relationship('lokasi', 'lokasi')
                     ->required(),
-                    
+
                  Select::make('kategori_id')
                     ->label('Kategori')
                     ->searchable()
                     ->preload()
                     ->relationship('kategori', 'nama')
                     ->required(),
-                    
+
                 TextInput::make('deskripsi')
                     ->maxLength(255),
-            ])->columns(1);            
+            ])->columns(1);
     }
 
     public static function table(Table $table): Table
@@ -71,7 +72,7 @@ class ProductResource extends Resource
         return $table
             ->columns([
                  TextColumn::make('name')
-                    ->label('Nama Product')   
+                    ->label('Nama Product')
                     ->searchable(),
                  TextColumn::make('qty')
                     ->Label('Total Stok')
@@ -124,6 +125,18 @@ class ProductResource extends Resource
             'create' => Pages\CreateProduct::route('/create'),
             // 'view' => Pages\ViewProduct::route('/{record}'),
             'edit' => Pages\EditProduct::route('/{record}/edit'),
+        ];
+    }
+
+    public static function getPermissionPrefixes(): array
+    {
+        return [
+            'view',
+            'view_any',
+            'create',
+            'update',
+            'delete',
+            'delete_any',
         ];
     }
 }
